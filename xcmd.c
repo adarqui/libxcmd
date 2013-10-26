@@ -177,10 +177,34 @@ xcmd_t * xcmd_create(char *js_str) {
 
 	xcmd_process_argv(x_p, x_p->js_argv);
 	xcmd_process_envp(x_p, x_p->js_envp);
+	xcmd_flags_parse(x_p);
 
 	return x_p;
 }
 
+void xcmd_flags_parse(xcmd_t *x_p) {
+	json_object *js_flags;
+	char * s;
+
+	if(!x_p && !x_p->js) return;
+
+	js_flags = json_object_object_get(x_p->js,"flags");
+	if(!js_flags) return;
+
+	if(json_object_get_type(js_flags) != json_type_string) goto cleanup;
+
+	s = (char *)json_object_get_string(js_flags);
+	if(!s) goto cleanup;
+
+	if(!strcasecmp(s, "wait")) {
+		x_p->flags |= XCMD_FLAGS_WAIT;
+	}
+
+	cleanup:
+	if(js_flags) json_object_put(js_flags);
+
+	return;
+}
 
 void xcmd_run_parse(xcmd_t *x_p) {
 	json_object *js_run;
@@ -198,13 +222,14 @@ void xcmd_run_parse(xcmd_t *x_p) {
 
 	if(!strcasecmp(s, "none")) {
 		x_p->run = XCMD_RUN_NONE;
+	} else if(!strcasecmp(s, "cb")) {
+		x_p->run = XCMD_RUN_CB;
 	} else if(!strcasecmp(s, "exec")) {
 		x_p->run = XCMD_RUN_EXEC;
 	} else if(!strcasecmp(s, "fork")) {
 		x_p->run = XCMD_RUN_FORK;
 	} else if(!strcasecmp(s, "pthread")) {
 		x_p->run = XCMD_RUN_PTHREAD;
-		puts("WTF");
 	}
 	
 	cleanup:
@@ -213,7 +238,7 @@ void xcmd_run_parse(xcmd_t *x_p) {
 	return;
 }
 
-int xcmd_run(xcmd_t *x_p) {
+int xcmd_run(xcmd_t *x_p, xcmd_run_fn fn) {
 	int n = -1;
 
 	if(!x_p) return n;
@@ -227,6 +252,24 @@ int xcmd_run(xcmd_t *x_p) {
 		case XCMD_RUN_EXEC: {
 			n = execve(x_p->argv[0], x_p->argv, x_p->envp);
 			break;
+		}
+		case XCMD_RUN_CB: {
+			if(!fn) break;
+			n = fn(x_p->argc, x_p->argv, x_p->envp);
+			break;
+		}
+		case XCMD_RUN_FORK: {
+			if(!fn) break;
+			if(!fork()) {
+				n = fn(x_p->argc, x_p->argv, x_p->envp);
+				exit(n);
+			} else {
+				if(x_p->flags & XCMD_FLAGS_WAIT) {
+					wait(&n);
+				} else {
+					waitpid(-1, &n, WNOHANG);
+				}
+			}
 		}
 		default: {
 			return n;

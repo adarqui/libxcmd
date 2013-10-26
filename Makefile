@@ -7,6 +7,7 @@ test:
 	-echo '{ "argv" : "1" , "envp" : "1" }' | ./example
 	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync" }' | ./example
 	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "none" }' | ./example
+	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "cb" }' | ./example
 	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "exec" }' | ./example
 	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "fork" }' | ./example
 	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "pthread" }' | ./example
