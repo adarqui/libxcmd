@@ -10,7 +10,7 @@ int main(int argc, char *argv[], char *envp[]) {
 		p = fgets(buf,sizeof(buf)-1,stdin);
 		if(!p) break;
 
-		x_p = xcmd_create(NULL, NULL, buf, "``");
+		x_p = xcmd_create(buf);
 		if(!x_p) {
 			perror("main:xcmd_create");
 			exit(-1);
@@ -19,4 +19,5 @@ int main(int argc, char *argv[], char *envp[]) {
 		xcmd_info(x_p);
 		xcmd_fini(x_p);
 	}
+	return 0;
 }
