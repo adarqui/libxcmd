@@ -1,4 +1,7 @@
 #include "xcmd.h"
+#include <errno.h>
+#
+extern int errno;
 
 int main(int argc, char *argv[], char *envp[]) {
 	xcmd_t * x_p;
@@ -16,7 +19,14 @@ int main(int argc, char *argv[], char *envp[]) {
 			exit(-1);
 		}
 
+		xcmd_run_parse(x_p);
 		xcmd_info(x_p);
+		errno = 0;
+		if(xcmd_run(x_p) < 0) {
+			if(errno != 0) {
+				perror("main:xcmd_run:");
+			}
+		}
 		xcmd_fini(x_p);
 	}
 	return 0;

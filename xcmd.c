@@ -140,6 +140,7 @@ void xcmd_info(xcmd_t * x_p) {
 	puts("xcmd_info:");
 
 	printf("\targc:\n\t\t%i\n",x_p->argc);
+	printf("\trun:\n\t\t%i\n",x_p->run);
 
 	puts("\targv:");
 	xcmd_info_print_array(x_p->argv, "\t\t");
@@ -178,4 +179,59 @@ xcmd_t * xcmd_create(char *js_str) {
 	xcmd_process_envp(x_p, x_p->js_envp);
 
 	return x_p;
+}
+
+
+void xcmd_run_parse(xcmd_t *x_p) {
+	json_object *js_run;
+	char * s;
+
+	if(!x_p && !x_p->js) return;
+
+	js_run = json_object_object_get(x_p->js,"run");
+	if(!js_run) return;
+
+	if(json_object_get_type(js_run) != json_type_string) goto cleanup;
+
+	s = (char *)json_object_get_string(js_run);
+	if(!s) goto cleanup;
+
+	if(!strcasecmp(s, "none")) {
+		x_p->run = XCMD_RUN_NONE;
+	} else if(!strcasecmp(s, "exec")) {
+		x_p->run = XCMD_RUN_EXEC;
+	} else if(!strcasecmp(s, "fork")) {
+		x_p->run = XCMD_RUN_FORK;
+	} else if(!strcasecmp(s, "pthread")) {
+		x_p->run = XCMD_RUN_PTHREAD;
+		puts("WTF");
+	}
+	
+	cleanup:
+	if(js_run) json_object_put(js_run);
+
+	return;
+}
+
+int xcmd_run(xcmd_t *x_p) {
+	int n = -1;
+
+	if(!x_p) return n;
+	
+	if(!x_p->argc || !x_p->argv || !x_p->envp) return n;
+
+	if(!x_p->run) { xcmd_run_parse(x_p); }
+	if(!x_p->run) return n;
+
+	switch(x_p->run) {
+		case XCMD_RUN_EXEC: {
+			n = execve(x_p->argv[0], x_p->argv, x_p->envp);
+			break;
+		}
+		default: {
+			return n;
+		}
+	}
+
+	return n;
 }

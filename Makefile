@@ -5,7 +5,11 @@ all:
 test:
 	-echo '{ "hi" : "1" }' | ./example
 	-echo '{ "argv" : "1" , "envp" : "1" }' | ./example
-	-echo '{ "argv" : [ "ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync" }' | ./example
+	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync" }' | ./example
+	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "none" }' | ./example
+	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "exec" }' | ./example
+	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "fork" }' | ./example
+	-echo '{ "argv" : [ "/bin/ls", "-al" ], "envp" : [ "HI=1", "HELLO=2" ], "type" : "sync", "run" : "pthread" }' | ./example
 
 jsonc:
 	curl https://s3.amazonaws.com/json-c_releases/releases/json-c-0.11.tar.gz | tar zxvf && cd json-c-0.11 && ./configure --prefix=/usr && make && make install
