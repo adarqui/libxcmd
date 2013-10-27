@@ -15,5 +15,9 @@ test:
 jsonc:
 	curl https://s3.amazonaws.com/json-c_releases/releases/json-c-0.11.tar.gz | tar zxvf - && cd json-c-0.11 && ./configure --prefix=/usr && make && make install
 
+libev:
+	cvs -z3 -d :pserver:anonymous@cvs.schmorp.de/schmorpforge co libev && cd libev && bash autogen.sh && ./confgure --prefix=/usr && make && make install
+
+
 clean:
 	rm -f example
