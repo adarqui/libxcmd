@@ -1,6 +1,6 @@
 all:
-	gcc -Wall -O3 -c -Bshareable xcmd.c -o xcmd.so
-	gcc -I/usr/include/json-c -Wall -O3 example.c xcmd.c -o example -ljson-c
+	gcc -Wall -O3 -c -Bshareable xcmd.c -o xcmd.so -lev
+	gcc -I/usr/include/json-c -Wall -O3 example.c xcmd.c -o example -ljson-c -lev
 
 test:
 	-echo '{ "hi" : "1" }' | ./example

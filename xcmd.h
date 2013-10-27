@@ -9,6 +9,8 @@
 #include <json-c/json.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/un.h>
+#include <ev.h>
 
 typedef enum xcmd_ARRAY {
 	XCMD_ARRAY_ARGV,
@@ -62,6 +64,9 @@ void xcmd_flags_parse(xcmd_t *);
 
 void xcmd_run_parse(xcmd_t *);
 int xcmd_run(xcmd_t *, xcmd_run_fn);
+
+int xcmd_bind_socket(xcmd_t *, int, char *, ...);
+int xcmd_bind_unix(xcmd_t *, char *);
 
 /* wrapper */
 xcmd_t * xcmd_create(char *);

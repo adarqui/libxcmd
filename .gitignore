@@ -2,3 +2,6 @@
 *.swp
 example
 env
+getopt
+libev
+json-c

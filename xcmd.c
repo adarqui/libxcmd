@@ -183,6 +183,26 @@ xcmd_t * xcmd_create(char *js_str) {
 	return x_p;
 }
 
+
+int xcmd_bind_socket(xcmd_t *x_p, int port, char *host, ...) {
+	if(!x_p || !port || !host) return -1;
+
+	return 0;
+}
+
+
+int xcmd_bind_unix(xcmd_t *x_p, char *path) {
+	struct sockaddr_un sun;
+
+	if(!x_p || !path) return -1;
+
+	memset(&sun,0,sizeof(sun));
+
+	return 0;
+}
+
+
+
 void xcmd_flags_parse(xcmd_t *x_p) {
 	json_object *js_flags;
 	char * s;
