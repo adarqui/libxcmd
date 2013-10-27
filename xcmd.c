@@ -25,6 +25,7 @@ void xcmd_free_loop(char **p) {
 
 	for(i = 0; p[i] != NULL; i++) {
 		free(p[i]);
+		p[i] = NULL;
 	}
 
 	free(p);
